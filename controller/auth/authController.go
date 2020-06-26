@@ -7,27 +7,48 @@ import (
 	"net/http"
 )
 
+type LoginForm struct {
+	Phone int64  `form:"phone" json:"phone" xml:"phone" binding:"required"`
+	Pwd   string `form:"pwd" json:"pwd" xml:"pwd" binding:"required"`
+}
+
+type RegForm struct {
+	Phone int64  `form:"phone" json:"phone" xml:"phone" binding:"required"`
+	Pwd   string `form:"pwd" json:"pwd" xml:"pwd" binding:"required"`
+	Name  string `form:"name" json:"name" xml:"name" binding:"required"`
+}
+
+type VerifyForm struct {
+	Name string `form:"name" json:"name" xml:"name" binding:"required"`
+}
+
 func Login(ctx *gin.Context) {
-	pwd := ctx.PostForm("pwd")
-	phone := ctx.PostForm("phone")
-	if !verifyParam("phone", phone) {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"msg":  "请输入正确的手机号",
-		})
+	var form LoginForm
+	if err := ctx.ShouldBind(&form); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if !verifyParam("pwd", pwd) {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"msg":  "密码长度8~20!",
-		})
-	}
-	user := model.GetUserByPhone(util.String2Int64(phone))
+	//pwd := ctx.PostForm("pwd")
+	//phone := ctx.PostForm("phone")
+	//if !verifyParam("phone", phone) {
+	//	ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+	//		"code": 422,
+	//		"msg":  "请输入正确的手机号",
+	//	})
+	//	return
+	//}
+	//if !verifyParam("pwd", pwd) {
+	//	ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+	//		"code": 422,
+	//		"msg":  "密码长度8~20!",
+	//	})
+	//	return
+	//}
+	user := model.GetUserByPhone(form.Phone)
 
-	if user.ID == 0 || !util.BCryptVerify([]byte(pwd), []byte(user.Pass)) {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
+	if user.ID == 0 || !util.BCryptVerify([]byte(form.Pwd), []byte(user.Pass)) {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"code": 401,
 			"msg":  "账号或密码错误",
 		})
 		return
@@ -40,7 +61,12 @@ func Login(ctx *gin.Context) {
 }
 
 func VerifyName(ctx *gin.Context) {
-	name := ctx.PostForm("name")
+	var form VerifyForm
+	if err := ctx.ShouldBind(&form); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	name := form.Name //ctx.PostForm("name")
 	if !verifyParam("name", name) {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code": 422,
@@ -59,9 +85,14 @@ func VerifyName(ctx *gin.Context) {
 }
 
 func Reg(ctx *gin.Context) {
-	name := ctx.PostForm("name")
-	pwd := ctx.PostForm("pwd")
-	phone := ctx.PostForm("phone")
+	var form RegForm
+	if err := ctx.ShouldBind(&form); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	name := form.Name   //ctx.PostForm("name")
+	pwd := form.Pwd     //ctx.PostForm("pwd")
+	phone := form.Phone //ctx.PostForm("phone")
 	if !verifyParam("name", name) {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code": 422,
@@ -89,7 +120,7 @@ func Reg(ctx *gin.Context) {
 		})
 		return
 	}
-	err := model.RegUser(name, pwd, util.String2Int64(phone))
+	err := model.RegUser(name, pwd, phone)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code": 422,
