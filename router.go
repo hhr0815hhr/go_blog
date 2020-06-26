@@ -6,8 +6,10 @@ import (
 )
 
 func SetRouter(r *gin.Engine) {
-	r.Group("/auth")
+	authGroup := r.Group("/auth")
 	{
-		r.POST("/login", auth.Login)
+		authGroup.POST("/login", auth.Login)
+		authGroup.POST("/reg", auth.Reg)
+		authGroup.POST("/verifyName", auth.VerifyName)
 	}
 }
