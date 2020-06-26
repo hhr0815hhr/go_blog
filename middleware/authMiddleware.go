@@ -13,9 +13,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		tokenStr := ctx.GetHeader("Authorization")
 
 		if tokenStr == "" || !strings.HasPrefix(tokenStr, "Bearer ") {
-			ctx.JSON(http.StatusUnauthorized, gin.H{
-				"code": http.StatusUnauthorized, "msg": "权限不足",
-			})
+			common.Response(ctx, http.StatusUnauthorized, 401, "权限不足", nil)
 			ctx.Abort()
 			return
 		}
@@ -23,7 +21,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		token, claims, err := common.ParseToken(tokenStr)
 		if err != nil || !token.Valid {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})
+			common.Response(ctx, http.StatusUnauthorized, 401, "权限不足", nil)
 			ctx.Abort()
 			return
 		}
@@ -31,7 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		userId := claims.UserId
 		user := model.GetUserById(userId)
 		if user.ID == 0 {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})
+			common.Response(ctx, http.StatusUnauthorized, 401, "权限不足", nil)
 			ctx.Abort()
 			return
 		}
