@@ -16,6 +16,6 @@ func String2Int64(str string) int64 {
 	return int64(String2Int(str))
 }
 
-func int2String(i int) string {
+func Int2String(i int) string {
 	return strconv.Itoa(i)
 }

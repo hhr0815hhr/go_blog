@@ -5,7 +5,7 @@ import "github.com/jinzhu/gorm"
 type User struct {
 	gorm.Model
 	Name  string `gorm:"size:20;not null"`
-	Pass  string `gorm:"size:20;not null"`
+	Pass  string `gorm:"size:80;not null"`
 	Phone int64  `gorm:"not null"`
 }
 
@@ -18,6 +18,11 @@ func IsExist(name string) bool {
 
 func GetUserByPhone(phone int64) *User {
 	db.Where("phone=?", phone).First(&user)
+	return &user
+}
+
+func GetUserById(userId uint) *User {
+	db.First(&user, userId)
 	return &user
 }
 
