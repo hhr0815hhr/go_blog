@@ -31,11 +31,6 @@ func GetUserById(userId uint) *User {
 	return &user
 }
 
-//func GetUserByName(name string) *User {
-//	db.Where("name=?", name).First(&user)
-//	return &user
-//}
-
 func RegUser(name, pwd, email string) (error, *User) {
 	user = User{
 		Account: name,
