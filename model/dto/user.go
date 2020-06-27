@@ -3,13 +3,13 @@ package dto
 import "blog/model"
 
 type UserDto struct {
-	Name  string
-	Phone int64
+	Account string
+	Name    string
 }
 
 func User(user *model.User) *UserDto {
 	return &UserDto{
-		Name:  user.Name,
-		Phone: user.Phone,
+		Account: user.Account,
+		Name:    user.Name,
 	}
 }

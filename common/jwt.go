@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var jwtKey = []byte("geassafg")
+var jwtKey = []byte("my secret key:Eassy")
 
 type Claims struct {
 	UserId uint

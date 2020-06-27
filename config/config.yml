@@ -1,0 +1,14 @@
+server:
+  port: "80"
+
+mysql:
+  host: "192.168.0.115"
+  port: "3306"
+  user: "root"
+  pwd : "123456"
+  db  : "blog"
+
+stmp:
+  email: "********@sina.com"
+  pwd  : "*********"
+  host : "***********"

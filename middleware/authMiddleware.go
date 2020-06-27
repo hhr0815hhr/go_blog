@@ -4,7 +4,6 @@ import (
 	"blog/common"
 	"blog/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"strings"
 )
 
@@ -13,7 +12,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		tokenStr := ctx.GetHeader("Authorization")
 
 		if tokenStr == "" || !strings.HasPrefix(tokenStr, "Bearer ") {
-			common.Response(ctx, http.StatusUnauthorized, 401, "权限不足", nil)
+			common.Response(ctx, 401, "权限不足", nil)
 			ctx.Abort()
 			return
 		}
@@ -21,7 +20,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		token, claims, err := common.ParseToken(tokenStr)
 		if err != nil || !token.Valid {
-			common.Response(ctx, http.StatusUnauthorized, 401, "权限不足", nil)
+			common.Response(ctx, 401, "权限不足", nil)
 			ctx.Abort()
 			return
 		}
@@ -29,7 +28,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		userId := claims.UserId
 		user := model.GetUserById(userId)
 		if user.ID == 0 {
-			common.Response(ctx, http.StatusUnauthorized, 401, "权限不足", nil)
+			common.Response(ctx, 401, "权限不足", nil)
 			ctx.Abort()
 			return
 		}

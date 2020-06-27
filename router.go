@@ -13,6 +13,7 @@ func SetRouter(r *gin.Engine) {
 		loginGroup.POST("/login", auth.Login)
 		loginGroup.POST("/reg", auth.Reg)
 		loginGroup.POST("/verifyName", auth.VerifyName)
+		loginGroup.POST("/mail", auth.Mail)
 	}
 	userGroup := r.Group("/user")
 	{

@@ -1,23 +1,28 @@
 package model
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+)
 
 type User struct {
-	gorm.Model
-	Name  string `gorm:"size:20;not null"`
-	Pass  string `gorm:"size:80;not null"`
-	Phone int64  `gorm:"not null"`
+	ID        uint   `gorm:"primary_key"`
+	Account   string `gorm:"size:20;not null"`
+	Name      string `gorm:"size:20;not null"`
+	Pass      string `gorm:"size:80;not null"`
+	Email     string `gorm:"not null"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 var user User
 
 func IsExist(name string) bool {
-	GetUserByName(name)
+	GetUserByAccount(name)
 	return user.ID != 0
 }
 
-func GetUserByPhone(phone int64) *User {
-	db.Where("phone=?", phone).First(&user)
+func GetUserByAccount(account string) *User {
+	db.Where("account=?", account).First(&user)
 	return &user
 }
 
@@ -26,16 +31,17 @@ func GetUserById(userId uint) *User {
 	return &user
 }
 
-func GetUserByName(name string) *User {
-	db.Where("name=?", name).First(&user)
-	return &user
-}
+//func GetUserByName(name string) *User {
+//	db.Where("name=?", name).First(&user)
+//	return &user
+//}
 
-func RegUser(name, pwd string, phone int64) error {
+func RegUser(name, pwd, email string) (error, *User) {
 	user = User{
-		Name:  name,
-		Pass:  pwd,
-		Phone: phone,
+		Account: name,
+		Name:    name,
+		Pass:    pwd,
+		Email:   email,
 	}
-	return db.Create(&user).Error
+	return db.Create(&user).Error, &user
 }
