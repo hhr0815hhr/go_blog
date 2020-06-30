@@ -28,13 +28,13 @@ func InitDb() {
 
 func autoMigrate() {
 	db.SingularTable(true)
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &Article{}, &ArticleCate{}, &ArticleLabel{})
 }
 
 //连接池
 func setDbPool() {
-	db.DB().SetMaxIdleConns(5)
-	db.DB().SetMaxOpenConns(10)
+	db.DB().SetMaxIdleConns(10)
+	db.DB().SetMaxOpenConns(50)
 }
 
 func GetDB() *gorm.DB {
